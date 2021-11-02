@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tic_tac_toe/tic_tac_toe_game.dart';
+import 'package:tic_tac_toe/tic_tac_toe_board.dart';
+
 
 void main() {
   runApp(const MyApp());
