@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tic_tac_toe/tic_tac_toe_game.dart';
+import '../assets/constants.dart' as constants;
 
 class TicTacToeBoard extends StatefulWidget {
   const TicTacToeBoard({
@@ -13,7 +14,7 @@ class TicTacToeBoard extends StatefulWidget {
 
 class _TicTacToeBoardState extends State<TicTacToeBoard> {
   final TicTacToeGame game =
-      TicTacToeGame(player1: 'player');
+      TicTacToeGame(player1: constants.playerName);
 
   bool isThereWinner = false;
   List<int> win = [];
@@ -46,39 +47,39 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
     ]);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tic Tac Toe'),
+        title: const Text(constants.title),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           !isThereWinner && game.fullBoard()
               ? const Text(
-                  'Draw',
-                  style: TextStyle(fontSize: 20.0),
+                  constants.draw,
+                  style: TextStyle(fontSize: constants.fontSize),
                 )
               : Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      isThereWinner ? 'Winner: ' : 'Turn: ',
-                      style: const TextStyle(fontSize: 20.0),
+                      isThereWinner ? constants.winText : constants.turnText,
+                      style: const TextStyle(fontSize: constants.fontSize),
                     ),
                     Text(
                       isThereWinner ? _getWinner() : _getPlayerInTurn(),
                       style: TextStyle(
-                          fontSize: 20.0,
+                          fontSize: constants.fontSize,
                           color: isThereWinner
                               ? _getWinner() == game.player1
-                                  ? Colors.red
-                                  : Colors.blue
+                                  ? constants.playerOneColor
+                                  : constants.playerTwoColor
                               : _getPlayerInTurn() == game.player1
-                                  ? Colors.red
-                                  : Colors.blue),
+                                  ? constants.playerOneColor
+                                  : constants.playerTwoColor),
                     ),
                   ],
                 ),
           const SizedBox(
-            height: 10.0,
+            height: constants.fontSize,
           ),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -92,8 +93,8 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
                     right: true,
                     bottom: true,
                     color: isThereWinner && win.contains(0)
-                        ? Colors.amberAccent
-                        : Colors.transparent,
+                        ? constants.winningSet
+                        : constants.background,
                   ),
                   TicTacToeCell(
                     value: game.cells[1],
@@ -102,8 +103,8 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
                     right: true,
                     bottom: true,
                     color: isThereWinner && win.contains(1)
-                        ? Colors.amberAccent
-                        : Colors.transparent,
+                        ? constants.winningSet
+                        : constants.background,
                   ),
                   TicTacToeCell(
                     value: game.cells[2],
@@ -111,8 +112,8 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
                     left: true,
                     bottom: true,
                     color: isThereWinner && win.contains(2)
-                        ? Colors.amberAccent
-                        : Colors.transparent,
+                        ? constants.winningSet
+                        : constants.background,
                   ),
                 ],
               ),
@@ -126,8 +127,8 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
                     right: true,
                     bottom: true,
                     color: isThereWinner && win.contains(3)
-                        ? Colors.amberAccent
-                        : Colors.transparent,
+                        ? constants.winningSet
+                        : constants.background,
                   ),
                   TicTacToeCell(
                     value: game.cells[4],
@@ -137,8 +138,8 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
                     right: true,
                     left: true,
                     color: isThereWinner && win.contains(4)
-                        ? Colors.amberAccent
-                        : Colors.transparent,
+                        ? constants.winningSet
+                        : constants.background,
                   ),
                   TicTacToeCell(
                     value: game.cells[5],
@@ -147,8 +148,8 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
                     left: true,
                     bottom: true,
                     color: isThereWinner && win.contains(5)
-                        ? Colors.amberAccent
-                        : Colors.transparent,
+                        ? constants.winningSet
+                        : constants.background,
                   ),
                 ],
               ),
@@ -161,8 +162,8 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
                     top: true,
                     right: true,
                     color: isThereWinner && win.contains(6)
-                        ? Colors.amberAccent
-                        : Colors.transparent,
+                        ? constants.winningSet
+                        : constants.background,
                   ),
                   TicTacToeCell(
                     value: game.cells[7],
@@ -171,8 +172,8 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
                     left: true,
                     right: true,
                     color: isThereWinner && win.contains(7)
-                        ? Colors.amberAccent
-                        : Colors.transparent,
+                        ? constants.winningSet
+                        : constants.background,
                   ),
                   TicTacToeCell(
                     value: game.cells[8],
@@ -180,8 +181,8 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
                     top: true,
                     left: true,
                     color: isThereWinner && win.contains(8)
-                        ? Colors.amberAccent
-                        : Colors.transparent,
+                        ? constants.winningSet
+                        : constants.background,
                   ),
                 ],
               ),
@@ -211,7 +212,7 @@ class TicTacToeCell extends StatelessWidget {
     this.right = false,
     this.left = false,
     this.bottom = false,
-    this.size = 25.0,
+    this.size = constants.cellSize,
     this.color = Colors.transparent,
   });
 
@@ -232,22 +233,22 @@ class TicTacToeCell extends StatelessWidget {
           color: color,
           border: Border(
             top: BorderSide(
-                width: 3, color: top ? Colors.black : Colors.transparent),
+                width: constants.borderWidth, color: top ? constants.borders : constants.background),
             left: BorderSide(
-                width: 3, color: left ? Colors.black : Colors.transparent),
+                width: constants.borderWidth, color: left ? constants.borders : constants.background),
             right: BorderSide(
-                width: 3, color: right ? Colors.black : Colors.transparent),
+                width: constants.borderWidth, color: right ? constants.borders : constants.background),
             bottom: BorderSide(
-                width: 3, color: bottom ? Colors.black : Colors.transparent),
+                width: constants.borderWidth, color: bottom ? constants.borders : constants.background),
           )),
       child: TextButton(
         onPressed: onPressed,
         style: TextButton.styleFrom(
-          textStyle: TextStyle(fontSize: size * 2, fontStyle: FontStyle.italic),
+          textStyle: TextStyle(fontSize: size * 3, fontStyle: FontStyle.italic),
         ),
         child: Text(
           value,
-          style: TextStyle(color: value == 'X' ? Colors.red : Colors.blue),
+          style: TextStyle(color: value == constants.playerOneSymbol ? constants.playerOneColor : constants.playerTwoColor,),
         ),
       ),
     );
