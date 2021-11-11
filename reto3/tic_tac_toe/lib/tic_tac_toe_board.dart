@@ -48,6 +48,22 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
   }
 
   void _onItemTapped(int index) {
+    switch (index) {
+      case 0:
+        {
+          game.changeDifficulty(Difficulty.easy);
+          break;
+        }
+      case 1:
+        {
+          game.changeDifficulty(Difficulty.medium);
+          break;
+        }
+      default:
+        {
+          game.changeDifficulty(Difficulty.hard);
+        }
+    }
     setState(() {
       _selectedIndex = index;
     });
@@ -221,13 +237,26 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
             children: [
               ElevatedButton(
                 onPressed: _newGame,
-                child: const Text('New Game'),
+                child: const Text(constants.playAgain),
               ),
               ElevatedButton(
-                onPressed: () {
-                  SystemNavigator.pop();
-                },
-                child: const Text('Quit'),
+                onPressed: () => showDialog<String>(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                    content: const Text(constants.quitMessage),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, 'Cancel'),
+                        child: const Text(constants.dialogCancel),
+                      ),
+                      TextButton(
+                        onPressed: () => SystemNavigator.pop(),
+                        child: const Text(constants.dialogOkay),
+                      ),
+                    ],
+                  ),
+                ),
+                child: const Text(constants.quit),
               ),
             ],
           ),

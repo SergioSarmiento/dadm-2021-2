@@ -11,8 +11,13 @@ const String draw = 'It\'s a tie';
 const String winText = 'The winner is ';
 const String turnText = 'Turn: ';
 const String difficultyEasy = 'Easy';
-const String difficultyMedium = 'Medium';
+const String difficultyMedium = 'Normal';
 const String difficultyHard = 'Hard';
+const String playAgain = 'New Game';
+const String quit = 'Quit';
+const String quitMessage = 'Are you sure you want to quit?';
+const String dialogOkay = 'Yes';
+const String dialogCancel = 'Cancel';
 //Color
 const Color playerOneColor = Colors.green;
 const Color playerTwoColor = Colors.red;
