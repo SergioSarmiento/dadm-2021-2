@@ -13,8 +13,8 @@ class TicTacToeBoard extends StatefulWidget {
 }
 
 class _TicTacToeBoardState extends State<TicTacToeBoard> {
-  final TicTacToeGame game =
-      TicTacToeGame(player1: constants.playerName);
+  int _selectedIndex = 0;
+  final TicTacToeGame game = TicTacToeGame(player1: constants.playerName);
 
   bool isThereWinner = false;
   List<int> win = [];
@@ -24,6 +24,14 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
       game.markACell(index);
       win = game.getWinSet();
       isThereWinner = win.isNotEmpty;
+    });
+  }
+
+  void _newGame() {
+    setState(() {
+      game.resetBoard();
+      win = [];
+      isThereWinner = false;
     });
   }
 
@@ -39,6 +47,45 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
     }
   }
 
+  void _onItemTapped(int index) {
+    switch (index) {
+      case 0:
+        {
+          game.changeDifficulty(Difficulty.easy);
+          break;
+        }
+      case 1:
+        {
+          game.changeDifficulty(Difficulty.medium);
+          break;
+        }
+      default:
+        {
+          game.changeDifficulty(Difficulty.hard);
+        }
+    }
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  Color _difficultyColor() {
+    switch (_selectedIndex) {
+      case 0:
+        {
+          return constants.playerOneColor;
+        }
+      case 1:
+        {
+          return constants.borders;
+        }
+      default:
+        {
+          return constants.playerTwoColor;
+        }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([
@@ -50,37 +97,8 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
         title: const Text(constants.title),
       ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          !isThereWinner && game.fullBoard()
-              ? const Text(
-                  constants.draw,
-                  style: TextStyle(fontSize: constants.fontSize),
-                )
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      isThereWinner ? constants.winText : constants.turnText,
-                      style: const TextStyle(fontSize: constants.fontSize),
-                    ),
-                    Text(
-                      isThereWinner ? _getWinner() : _getPlayerInTurn(),
-                      style: TextStyle(
-                          fontSize: constants.fontSize,
-                          color: isThereWinner
-                              ? _getWinner() == game.player1
-                                  ? constants.playerOneColor
-                                  : constants.playerTwoColor
-                              : _getPlayerInTurn() == game.player1
-                                  ? constants.playerOneColor
-                                  : constants.playerTwoColor),
-                    ),
-                  ],
-                ),
-          const SizedBox(
-            height: constants.fontSize,
-          ),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -188,17 +206,80 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
               ),
             ],
           ),
+          !isThereWinner && game.fullBoard()
+              ? const Text(
+                  constants.draw,
+                  style: TextStyle(fontSize: constants.fontSize),
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      isThereWinner ? constants.winText : constants.turnText,
+                      style: const TextStyle(fontSize: constants.fontSize),
+                    ),
+                    Text(
+                      isThereWinner ? _getWinner() : _getPlayerInTurn(),
+                      style: TextStyle(
+                          fontSize: constants.fontSize,
+                          color: isThereWinner
+                              ? _getWinner() == game.player1
+                                  ? constants.playerOneColor
+                                  : constants.playerTwoColor
+                              : _getPlayerInTurn() == game.player1
+                                  ? constants.playerOneColor
+                                  : constants.playerTwoColor),
+                    ),
+                  ],
+                ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              ElevatedButton(
+                onPressed: _newGame,
+                child: const Text(constants.playAgain),
+              ),
+              ElevatedButton(
+                onPressed: () => showDialog<String>(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                    content: const Text(constants.quitMessage),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, 'Cancel'),
+                        child: const Text(constants.dialogCancel),
+                      ),
+                      TextButton(
+                        onPressed: () => SystemNavigator.pop(),
+                        child: const Text(constants.dialogOkay),
+                      ),
+                    ],
+                  ),
+                ),
+                child: const Text(constants.quit),
+              ),
+            ],
+          ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.restore),
-        onPressed: () {
-          setState(() {
-            game.resetBoard();
-            win = [];
-            isThereWinner = false;
-          });
-        },
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.child_care),
+            label: constants.difficultyEasy,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.mood),
+            label: constants.difficultyMedium,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.mood_bad),
+            label: constants.difficultyHard,
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: _difficultyColor(),
+        onTap: _onItemTapped,
       ),
     );
   }
@@ -233,13 +314,17 @@ class TicTacToeCell extends StatelessWidget {
           color: color,
           border: Border(
             top: BorderSide(
-                width: constants.borderWidth, color: top ? constants.borders : constants.background),
+                width: constants.borderWidth,
+                color: top ? constants.borders : constants.background),
             left: BorderSide(
-                width: constants.borderWidth, color: left ? constants.borders : constants.background),
+                width: constants.borderWidth,
+                color: left ? constants.borders : constants.background),
             right: BorderSide(
-                width: constants.borderWidth, color: right ? constants.borders : constants.background),
+                width: constants.borderWidth,
+                color: right ? constants.borders : constants.background),
             bottom: BorderSide(
-                width: constants.borderWidth, color: bottom ? constants.borders : constants.background),
+                width: constants.borderWidth,
+                color: bottom ? constants.borders : constants.background),
           )),
       child: TextButton(
         onPressed: onPressed,
@@ -248,7 +333,11 @@ class TicTacToeCell extends StatelessWidget {
         ),
         child: Text(
           value,
-          style: TextStyle(color: value == constants.playerOneSymbol ? constants.playerOneColor : constants.playerTwoColor,),
+          style: TextStyle(
+            color: value == constants.playerOneSymbol
+                ? constants.playerOneColor
+                : constants.playerTwoColor,
+          ),
         ),
       ),
     );
