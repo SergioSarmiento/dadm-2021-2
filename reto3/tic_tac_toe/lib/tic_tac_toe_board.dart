@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tic_tac_toe/tic_tac_toe_game.dart';
+import 'package:soundpool/soundpool.dart';
 import '../assets/constants.dart' as constants;
 
 class TicTacToeBoard extends StatefulWidget {
@@ -15,11 +16,13 @@ class TicTacToeBoard extends StatefulWidget {
 class _TicTacToeBoardState extends State<TicTacToeBoard> {
   int _selectedIndex = 0;
   final TicTacToeGame game = TicTacToeGame(player1: constants.playerName);
+  Soundpool pool = Soundpool.fromOptions();
 
   bool isThereWinner = false;
   List<int> win = [];
 
   void updateBoard(int index) {
+    _playSoundButton(constants.buttonsndpath);
     setState(() {
       game.markACell(index);
       win = game.getWinSet();
@@ -28,11 +31,19 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
   }
 
   void _newGame() {
+    _playSoundButton(constants.buttonsndpath);
     setState(() {
       game.resetBoard();
       win = [];
       isThereWinner = false;
     });
+  }
+
+  void _playSoundButton(String path) async {
+    int soundId = await rootBundle.load(path).then((ByteData soundData) {
+      return pool.load(soundData);
+    });
+    int streamId = await pool.play(soundId);
   }
 
   String _getPlayerInTurn() {
@@ -41,6 +52,11 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
 
   String _getWinner() {
     if (isThereWinner) {
+      if (!game.playerOneTurn) {
+        _playSoundButton(constants.yourewinnersnd);
+      } else {
+        _playSoundButton(constants.youlosesnd);
+      }
       return game.playerOneTurn ? game.player2 : game.player1;
     } else {
       return '';
@@ -48,6 +64,7 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
   }
 
   void _onItemTapped(int index) {
+    _playSoundButton(constants.buttonsndpath);
     switch (index) {
       case 0:
         {
