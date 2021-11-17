@@ -18,6 +18,10 @@ const String quit = 'Quit';
 const String quitMessage = 'Are you sure you want to quit?';
 const String dialogOkay = 'Yes';
 const String dialogCancel = 'Cancel';
+const String error = 'Error';
+const String ximgpath = 'assets/images/x-sprite.png';
+const String oimgpath = 'assets/images/o-sprite.png';
+
 //Color
 const Color playerOneColor = Colors.green;
 const Color playerTwoColor = Colors.red;
