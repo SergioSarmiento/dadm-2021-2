@@ -326,19 +326,16 @@ class TicTacToeCell extends StatelessWidget {
                 width: constants.borderWidth,
                 color: bottom ? constants.borders : constants.background),
           )),
-      child: TextButton(
+      child: IconButton(
         onPressed: onPressed,
-        style: TextButton.styleFrom(
-          textStyle: TextStyle(fontSize: size * 3, fontStyle: FontStyle.italic),
-        ),
-        child: Text(
-          value,
-          style: TextStyle(
-            color: value == constants.playerOneSymbol
-                ? constants.playerOneColor
-                : constants.playerTwoColor,
-          ),
-        ),
+        iconSize: size * 2,
+        icon: value == constants.playerOneSymbol
+            ? Image.asset(constants.ximgpath)
+            : value == constants.playerTwoSymbol
+                ? Image.asset(constants.oimgpath)
+                : value != constants.blank
+                    ? const Text(constants.error)
+                    : Text(value),
       ),
     );
   }
