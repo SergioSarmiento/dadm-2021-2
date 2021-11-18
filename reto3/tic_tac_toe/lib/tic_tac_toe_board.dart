@@ -20,18 +20,29 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
 
   bool isThereWinner = false;
   List<int> win = [];
+  List<int> record = [0, 0, 0];
 
   void updateBoard(int index) {
-    _playSoundButton(constants.buttonsndpath);
+    _playSoundButton(constants.buttonSoundPath);
     setState(() {
       game.markACell(index);
       win = game.getWinSet();
       isThereWinner = win.isNotEmpty;
+      if (game.fullBoard() && !isThereWinner) {
+        record[2] = record[2] + 1;
+      } else {
+        final winner = _getWinner();
+        if (winner == game.player1) {
+          record[0] = record[0] + 1;
+        } else if (winner == game.player2) {
+          record[1] = record[1] + 1;
+        }
+      }
     });
   }
 
   void _newGame() {
-    _playSoundButton(constants.buttonsndpath);
+    _playSoundButton(constants.buttonSoundPath);
     setState(() {
       game.resetBoard();
       win = [];
@@ -53,9 +64,9 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
   String _getWinner() {
     if (isThereWinner) {
       if (!game.playerOneTurn) {
-        _playSoundButton(constants.yourewinnersnd);
+        _playSoundButton(constants.youreWinnerSound);
       } else {
-        _playSoundButton(constants.youlosesnd);
+        _playSoundButton(constants.youLoseSound);
       }
       return game.playerOneTurn ? game.player2 : game.player1;
     } else {
@@ -64,7 +75,7 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
   }
 
   void _onItemTapped(int index) {
-    _playSoundButton(constants.buttonsndpath);
+    _playSoundButton(constants.buttonSoundPath);
     switch (index) {
       case 0:
         {
@@ -252,6 +263,14 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
+              Text('${constants.wins}: ${record[0]}'),
+              Text('${constants.loses}: ${record[1]}'),
+              Text('${constants.ties}: ${record[2]}'),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
               ElevatedButton(
                 onPressed: _newGame,
                 child: const Text(constants.playAgain),
@@ -347,9 +366,9 @@ class TicTacToeCell extends StatelessWidget {
         onPressed: onPressed,
         iconSize: size * 2,
         icon: value == constants.playerOneSymbol
-            ? Image.asset(constants.ximgpath)
+            ? Image.asset(constants.xImagePath)
             : value == constants.playerTwoSymbol
-                ? Image.asset(constants.oimgpath)
+                ? Image.asset(constants.oImagePath)
                 : value != constants.blank
                     ? const Text(constants.error)
                     : Text(value),

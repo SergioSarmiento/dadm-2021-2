@@ -19,13 +19,16 @@ const String quitMessage = 'Are you sure you want to quit?';
 const String dialogOkay = 'Yes';
 const String dialogCancel = 'Cancel';
 const String error = 'Error';
+const String wins = 'Wins';
+const String loses = 'Loses';
+const String ties = 'Ties';
 
 //assets paths
-const String ximgpath = 'assets/images/x-sprite.png';
-const String oimgpath = 'assets/images/o-sprite.png';
-const String buttonsndpath = 'assets/sounds/digi_plink.wav';
-const String yourewinnersnd = 'assets/sounds/music_marimba_chord.wav';
-const String youlosesnd = 'assets/sounds/beep_short_off.wav';
+const String xImagePath = 'assets/images/x-sprite.png';
+const String oImagePath = 'assets/images/o-sprite.png';
+const String buttonSoundPath = 'assets/sounds/digi_plink.wav';
+const String youreWinnerSound = 'assets/sounds/music_marimba_chord.wav';
+const String youLoseSound = 'assets/sounds/beep_short_off.wav';
 
 //Color
 const Color playerOneColor = Colors.green;
