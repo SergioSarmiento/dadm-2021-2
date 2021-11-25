@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:tic_tac_toe/tic_tac_toe_game.dart';
 import 'package:soundpool/soundpool.dart';
 import '../assets/constants.dart' as constants;
 
 class TicTacToeBoard extends StatefulWidget {
-  const TicTacToeBoard({
+  TicTacToeBoard({
     Key? key,
   }) : super(key: key);
 
@@ -14,6 +16,9 @@ class TicTacToeBoard extends StatefulWidget {
 }
 
 class _TicTacToeBoardState extends State<TicTacToeBoard> {
+  _TicTacToeBoardState() {
+    _getPreferences();
+  }
   int _selectedIndex = 0;
   final TicTacToeGame game = TicTacToeGame(player1: constants.playerName);
   Soundpool pool = Soundpool.fromOptions();
@@ -22,7 +27,32 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
   List<int> win = [];
   List<int> record = [0, 0, 0];
 
-  void updateBoard(int index) {
+  Future<void> _getPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      record = [
+        prefs.getInt('wins') ?? 0,
+        prefs.getInt('loses') ?? 0,
+        prefs.getInt('ties') ?? 0,
+      ];
+    });
+  }
+
+  Future<void> _savePreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('wins', record[0]);
+    prefs.setInt('loses', record[1]);
+    prefs.setInt('ties', record[2]);
+  }
+
+  void _clearScore() {
+    setState(() {
+      record = [0, 0, 0];
+      _savePreferences();
+    });
+  }
+
+  void updateBoard(int index) async {
     _playSoundButton(constants.buttonSoundPath);
     setState(() {
       game.markACell(index);
@@ -30,12 +60,15 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
       isThereWinner = win.isNotEmpty;
       if (game.fullBoard() && !isThereWinner) {
         record[2] = record[2] + 1;
+        _savePreferences();
       } else {
         final winner = _getWinner();
         if (winner == game.player1) {
           record[0] = record[0] + 1;
+          _savePreferences();
         } else if (winner == game.player2) {
           record[1] = record[1] + 1;
+          _savePreferences();
         }
       }
     });
@@ -201,6 +234,29 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
               onPressed: () => showDialog<String>(
                 context: context,
                 builder: (BuildContext context) => AlertDialog(
+                  content: const Text(constants.clearMessage),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, 'Clear'),
+                      child: const Text(constants.dialogCancel),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        _playSoundButton(constants.buttonSoundPath);
+                        _clearScore();
+                        return Navigator.pop(context, 'Clear');
+                      },
+                      child: const Text(constants.dialogOkay),
+                    ),
+                  ],
+                ),
+              ),
+              child: const Text(constants.clear),
+            ),
+            ElevatedButton(
+              onPressed: () => showDialog<String>(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
                   content: const Text(constants.quitMessage),
                   actions: <Widget>[
                     TextButton(
@@ -267,6 +323,29 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
             ElevatedButton(
               onPressed: _newGame,
               child: const Text(constants.playAgain),
+            ),
+            ElevatedButton(
+              onPressed: () => showDialog<String>(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                  content: const Text(constants.clearMessage),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, 'Clear'),
+                      child: const Text(constants.dialogCancel),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        _playSoundButton(constants.buttonSoundPath);
+                        _clearScore();
+                        return Navigator.pop(context, 'Clear');
+                      },
+                      child: const Text(constants.dialogOkay),
+                    ),
+                  ],
+                ),
+              ),
+              child: const Text(constants.clear),
             ),
             ElevatedButton(
               onPressed: () => showDialog<String>(
