@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+
 import 'package:tic_tac_toe/tic_tac_toe_board.dart';
 
-
-void main() {
+void main() async {
   runApp(const MyApp());
 }
 
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const TicTacToeBoard(),
+      home: TicTacToeBoard(),
     );
   }
 }
