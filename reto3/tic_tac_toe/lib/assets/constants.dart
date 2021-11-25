@@ -39,4 +39,5 @@ const Color winningSet = Colors.greenAccent;
 //numbers
 const double fontSize = 20.0;
 const double cellSize = 20.0;
+const double cellSizeLandscape = 8.0;
 const double borderWidth = 3;
