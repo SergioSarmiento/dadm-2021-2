@@ -116,187 +116,18 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
     return Scaffold(
       appBar: AppBar(
         title: const Text(constants.title),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TicTacToeCell(
-                    value: game.cells[0],
-                    onPressed: !isThereWinner ? () => updateBoard(0) : () {},
-                    right: true,
-                    bottom: true,
-                    color: isThereWinner && win.contains(0)
-                        ? constants.winningSet
-                        : constants.background,
-                  ),
-                  TicTacToeCell(
-                    value: game.cells[1],
-                    onPressed: !isThereWinner ? () => updateBoard(1) : () {},
-                    left: true,
-                    right: true,
-                    bottom: true,
-                    color: isThereWinner && win.contains(1)
-                        ? constants.winningSet
-                        : constants.background,
-                  ),
-                  TicTacToeCell(
-                    value: game.cells[2],
-                    onPressed: !isThereWinner ? () => updateBoard(2) : () {},
-                    left: true,
-                    bottom: true,
-                    color: isThereWinner && win.contains(2)
-                        ? constants.winningSet
-                        : constants.background,
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TicTacToeCell(
-                    value: game.cells[3],
-                    onPressed: !isThereWinner ? () => updateBoard(3) : () {},
-                    top: true,
-                    right: true,
-                    bottom: true,
-                    color: isThereWinner && win.contains(3)
-                        ? constants.winningSet
-                        : constants.background,
-                  ),
-                  TicTacToeCell(
-                    value: game.cells[4],
-                    onPressed: !isThereWinner ? () => updateBoard(4) : () {},
-                    top: true,
-                    bottom: true,
-                    right: true,
-                    left: true,
-                    color: isThereWinner && win.contains(4)
-                        ? constants.winningSet
-                        : constants.background,
-                  ),
-                  TicTacToeCell(
-                    value: game.cells[5],
-                    onPressed: !isThereWinner ? () => updateBoard(5) : () {},
-                    top: true,
-                    left: true,
-                    bottom: true,
-                    color: isThereWinner && win.contains(5)
-                        ? constants.winningSet
-                        : constants.background,
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TicTacToeCell(
-                    value: game.cells[6],
-                    onPressed: !isThereWinner ? () => updateBoard(6) : () {},
-                    top: true,
-                    right: true,
-                    color: isThereWinner && win.contains(6)
-                        ? constants.winningSet
-                        : constants.background,
-                  ),
-                  TicTacToeCell(
-                    value: game.cells[7],
-                    onPressed: !isThereWinner ? () => updateBoard(7) : () {},
-                    top: true,
-                    left: true,
-                    right: true,
-                    color: isThereWinner && win.contains(7)
-                        ? constants.winningSet
-                        : constants.background,
-                  ),
-                  TicTacToeCell(
-                    value: game.cells[8],
-                    onPressed: !isThereWinner ? () => updateBoard(8) : () {},
-                    top: true,
-                    left: true,
-                    color: isThereWinner && win.contains(8)
-                        ? constants.winningSet
-                        : constants.background,
-                  ),
-                ],
-              ),
-            ],
-          ),
-          !isThereWinner && game.fullBoard()
-              ? const Text(
-                  constants.draw,
-                  style: TextStyle(fontSize: constants.fontSize),
-                )
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      isThereWinner ? constants.winText : constants.turnText,
-                      style: const TextStyle(fontSize: constants.fontSize),
-                    ),
-                    Text(
-                      isThereWinner ? _getWinner() : _getPlayerInTurn(),
-                      style: TextStyle(
-                          fontSize: constants.fontSize,
-                          color: isThereWinner
-                              ? _getWinner() == game.player1
-                                  ? constants.playerOneColor
-                                  : constants.playerTwoColor
-                              : _getPlayerInTurn() == game.player1
-                                  ? constants.playerOneColor
-                                  : constants.playerTwoColor),
-                    ),
-                  ],
-                ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Text('${constants.wins}: ${record[0]}'),
-              Text('${constants.loses}: ${record[1]}'),
-              Text('${constants.ties}: ${record[2]}'),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              ElevatedButton(
-                onPressed: _newGame,
-                child: const Text(constants.playAgain),
-              ),
-              ElevatedButton(
-                onPressed: () => showDialog<String>(
-                  context: context,
-                  builder: (BuildContext context) => AlertDialog(
-                    content: const Text(constants.quitMessage),
-                    actions: <Widget>[
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, 'Cancel'),
-                        child: const Text(constants.dialogCancel),
-                      ),
-                      TextButton(
-                        onPressed: () => SystemNavigator.pop(),
-                        child: const Text(constants.dialogOkay),
-                      ),
-                    ],
-                  ),
-                ),
-                child: const Text(constants.quit),
-              ),
-            ],
-          ),
-        ],
+      body: OrientationBuilder(
+        builder: (context, orientation) {
+          if (orientation == Orientation.portrait) {
+            return portraitMode();
+          } else {
+            return landscapeMode();
+          }
+        },
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -317,6 +148,280 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
         selectedItemColor: _difficultyColor(),
         onTap: _onItemTapped,
       ),
+    );
+  }
+
+  Widget portraitMode() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        board(),
+        !isThereWinner && game.fullBoard()
+            ? const Text(
+                constants.draw,
+                style: TextStyle(fontSize: constants.fontSize),
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    isThereWinner ? constants.winText : constants.turnText,
+                    style: const TextStyle(fontSize: constants.fontSize),
+                  ),
+                  Text(
+                    isThereWinner ? _getWinner() : _getPlayerInTurn(),
+                    style: TextStyle(
+                        fontSize: constants.fontSize,
+                        color: isThereWinner
+                            ? _getWinner() == game.player1
+                                ? constants.playerOneColor
+                                : constants.playerTwoColor
+                            : _getPlayerInTurn() == game.player1
+                                ? constants.playerOneColor
+                                : constants.playerTwoColor),
+                  ),
+                ],
+              ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Text('${constants.wins}: ${record[0]}'),
+            Text('${constants.loses}: ${record[1]}'),
+            Text('${constants.ties}: ${record[2]}'),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            ElevatedButton(
+              onPressed: _newGame,
+              child: const Text(constants.playAgain),
+            ),
+            ElevatedButton(
+              onPressed: () => showDialog<String>(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                  content: const Text(constants.quitMessage),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, 'Cancel'),
+                      child: const Text(constants.dialogCancel),
+                    ),
+                    TextButton(
+                      onPressed: () => SystemNavigator.pop(),
+                      child: const Text(constants.dialogOkay),
+                    ),
+                  ],
+                ),
+              ),
+              child: const Text(constants.quit),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget landscapeMode() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        board(landscape: true),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            !isThereWinner && game.fullBoard()
+                ? const Text(
+                    constants.draw,
+                    style: TextStyle(fontSize: constants.fontSize),
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        isThereWinner ? constants.winText : constants.turnText,
+                        style: const TextStyle(fontSize: constants.fontSize),
+                      ),
+                      Text(
+                        isThereWinner ? _getWinner() : _getPlayerInTurn(),
+                        style: TextStyle(
+                            fontSize: constants.fontSize,
+                            color: isThereWinner
+                                ? _getWinner() == game.player1
+                                    ? constants.playerOneColor
+                                    : constants.playerTwoColor
+                                : _getPlayerInTurn() == game.player1
+                                    ? constants.playerOneColor
+                                    : constants.playerTwoColor),
+                      ),
+                    ],
+                  ),
+            Column(
+              children: [
+                Text('${constants.wins}: ${record[0]}'),
+                Text('${constants.loses}: ${record[1]}'),
+                Text('${constants.ties}: ${record[2]}'),
+              ],
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                ElevatedButton(
+                  onPressed: _newGame,
+                  child: const Text(constants.playAgain),
+                ),
+                ElevatedButton(
+                  onPressed: () => showDialog<String>(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      content: const Text(constants.quitMessage),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, 'Cancel'),
+                          child: const Text(constants.dialogCancel),
+                        ),
+                        TextButton(
+                          onPressed: () => SystemNavigator.pop(),
+                          child: const Text(constants.dialogOkay),
+                        ),
+                      ],
+                    ),
+                  ),
+                  child: const Text(constants.quit),
+                ),
+              ],
+            ),
+          ],
+        )
+      ],
+    );
+  }
+
+  Widget board({bool landscape = false}) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TicTacToeCell(
+              value: game.cells[0],
+              onPressed: !isThereWinner ? () => updateBoard(0) : () {},
+              right: true,
+              bottom: true,
+              color: isThereWinner && win.contains(0)
+                  ? constants.winningSet
+                  : constants.background,
+              size:
+                  landscape ? constants.cellSizeLandscape : constants.cellSize,
+            ),
+            TicTacToeCell(
+                value: game.cells[1],
+                onPressed: !isThereWinner ? () => updateBoard(1) : () {},
+                left: true,
+                right: true,
+                bottom: true,
+                color: isThereWinner && win.contains(1)
+                    ? constants.winningSet
+                    : constants.background,
+                size: landscape
+                    ? constants.cellSizeLandscape
+                    : constants.cellSize),
+            TicTacToeCell(
+                value: game.cells[2],
+                onPressed: !isThereWinner ? () => updateBoard(2) : () {},
+                left: true,
+                bottom: true,
+                color: isThereWinner && win.contains(2)
+                    ? constants.winningSet
+                    : constants.background,
+                size: landscape
+                    ? constants.cellSizeLandscape
+                    : constants.cellSize),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TicTacToeCell(
+                value: game.cells[3],
+                onPressed: !isThereWinner ? () => updateBoard(3) : () {},
+                top: true,
+                right: true,
+                bottom: true,
+                color: isThereWinner && win.contains(3)
+                    ? constants.winningSet
+                    : constants.background,
+                size: landscape
+                    ? constants.cellSizeLandscape
+                    : constants.cellSize),
+            TicTacToeCell(
+                value: game.cells[4],
+                onPressed: !isThereWinner ? () => updateBoard(4) : () {},
+                top: true,
+                bottom: true,
+                right: true,
+                left: true,
+                color: isThereWinner && win.contains(4)
+                    ? constants.winningSet
+                    : constants.background,
+                size: landscape
+                    ? constants.cellSizeLandscape
+                    : constants.cellSize),
+            TicTacToeCell(
+                value: game.cells[5],
+                onPressed: !isThereWinner ? () => updateBoard(5) : () {},
+                top: true,
+                left: true,
+                bottom: true,
+                color: isThereWinner && win.contains(5)
+                    ? constants.winningSet
+                    : constants.background,
+                size: landscape
+                    ? constants.cellSizeLandscape
+                    : constants.cellSize),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TicTacToeCell(
+                value: game.cells[6],
+                onPressed: !isThereWinner ? () => updateBoard(6) : () {},
+                top: true,
+                right: true,
+                color: isThereWinner && win.contains(6)
+                    ? constants.winningSet
+                    : constants.background,
+                size: landscape
+                    ? constants.cellSizeLandscape
+                    : constants.cellSize),
+            TicTacToeCell(
+                value: game.cells[7],
+                onPressed: !isThereWinner ? () => updateBoard(7) : () {},
+                top: true,
+                left: true,
+                right: true,
+                color: isThereWinner && win.contains(7)
+                    ? constants.winningSet
+                    : constants.background,
+                size: landscape
+                    ? constants.cellSizeLandscape
+                    : constants.cellSize),
+            TicTacToeCell(
+                value: game.cells[8],
+                onPressed: !isThereWinner ? () => updateBoard(8) : () {},
+                top: true,
+                left: true,
+                color: isThereWinner && win.contains(8)
+                    ? constants.winningSet
+                    : constants.background,
+                size: landscape
+                    ? constants.cellSizeLandscape
+                    : constants.cellSize),
+          ],
+        ),
+      ],
     );
   }
 }
