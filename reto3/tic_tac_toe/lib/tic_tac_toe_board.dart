@@ -228,7 +228,7 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
       children: [
         board(landscape: true),
         Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             !isThereWinner && game.fullBoard()
                 ? const Text(
@@ -256,40 +256,36 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
                       ),
                     ],
                   ),
-            Column(
-              children: [
-                Text('${constants.wins}: ${record[0]}'),
-                Text('${constants.loses}: ${record[1]}'),
-                Text('${constants.ties}: ${record[2]}'),
-              ],
+            Text('${constants.wins}: ${record[0]}'),
+            Text('${constants.loses}: ${record[1]}'),
+            Text('${constants.ties}: ${record[2]}'),
+          ],
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: _newGame,
+              child: const Text(constants.playAgain),
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                ElevatedButton(
-                  onPressed: _newGame,
-                  child: const Text(constants.playAgain),
-                ),
-                ElevatedButton(
-                  onPressed: () => showDialog<String>(
-                    context: context,
-                    builder: (BuildContext context) => AlertDialog(
-                      content: const Text(constants.quitMessage),
-                      actions: <Widget>[
-                        TextButton(
-                          onPressed: () => Navigator.pop(context, 'Cancel'),
-                          child: const Text(constants.dialogCancel),
-                        ),
-                        TextButton(
-                          onPressed: () => SystemNavigator.pop(),
-                          child: const Text(constants.dialogOkay),
-                        ),
-                      ],
+            ElevatedButton(
+              onPressed: () => showDialog<String>(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                  content: const Text(constants.quitMessage),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, 'Cancel'),
+                      child: const Text(constants.dialogCancel),
                     ),
-                  ),
-                  child: const Text(constants.quit),
+                    TextButton(
+                      onPressed: () => SystemNavigator.pop(),
+                      child: const Text(constants.dialogOkay),
+                    ),
+                  ],
                 ),
-              ],
+              ),
+              child: const Text(constants.quit),
             ),
           ],
         )
