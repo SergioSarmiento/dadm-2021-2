@@ -26,7 +26,7 @@ class GamePageCubit extends Cubit<GamePageState> {
   Difficulty difficulty;
   Soundpool pool = Soundpool.fromOptions();
 
-  void cellMarked(int index) {
+  Future<void> cellMarked(int index) async {
     if (state is MyTurnGamePageState) {
       _playSoundButton(constants.buttonSoundPath);
       state.game.markACell(
@@ -37,13 +37,20 @@ class GamePageCubit extends Cubit<GamePageState> {
       if (_checkWin()) {
         emit(GameOverGamePageState(
             game: state.game, winner: (state as MyTurnGamePageState).myName));
+      } else if (state.game.fullBoard()) {
+        emit(GameOverGamePageState(game: state.game, winner: ''));
       } else {
         switch (gameMode) {
           case GameMode.singlePlayer:
+            emit(WaitingGamePageState(state.game));
+            await Future.delayed(const Duration(seconds: 1));
+            _playSoundButton(constants.buttonSoundPath);
             _computerMove();
             if (_checkWin()) {
               emit(GameOverGamePageState(
                   game: state.game, winner: state.game.player2));
+            } else if (state.game.fullBoard()) {
+              emit(GameOverGamePageState(game: state.game, winner: ''));
             } else {
               emit(MyTurnGamePageState(
                 game: state.game,
@@ -69,8 +76,10 @@ class GamePageCubit extends Cubit<GamePageState> {
   }
 
   void newGame() {
-    state.game.resetBoard();
-    emit(MyTurnGamePageState(game: state.game, myName: state.game.player1));
+    if (state is! WaitingGamePageState) {
+      state.game.resetBoard();
+      emit(MyTurnGamePageState(game: state.game, myName: state.game.player1));
+    }
   }
 
   void _playSoundButton(String path) async {
