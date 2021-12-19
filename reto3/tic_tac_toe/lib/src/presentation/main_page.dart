@@ -85,14 +85,14 @@ class MainPage extends StatelessWidget {
                 '/gamePage',
                 arguments: GamePageArguments(gameMode: GameMode.twoPlayers),
               ),
-              icon: Icon(Icons.people),
+              icon: const Icon(Icons.people),
               label: const Text(
                 constants.gameModeTwoPlayers,
                 style: TextStyle(fontSize: constants.fontSize),
               ),
             ),
             ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: () => Navigator.pushNamed(context, '/onlineLobby'),
                 icon: const Icon(Icons.wifi),
                 label: const Text(constants.gameModeOnline,
                     style: TextStyle(fontSize: constants.fontSize))),
