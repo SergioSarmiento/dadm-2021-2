@@ -11,7 +11,10 @@ class GamePageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('play')),
+      appBar: AppBar(
+        title: const Text('play'),
+        automaticallyImplyLeading: false,
+      ),
       body: BlocBuilder<GamePageCubit, GamePageState>(
         builder: (context, state) {
           return OrientationBuilder(builder: (context, orientation) {

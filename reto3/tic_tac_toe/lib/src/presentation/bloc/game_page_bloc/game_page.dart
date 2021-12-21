@@ -19,10 +19,10 @@ class GamePage extends StatelessWidget {
         gameMode: args.gameMode,
         difficulty: args.difficulty,
         game: TicTacToeGame(
-          player1: constants.playerOneName,
+          player1: args.player1,
           player2: args.gameMode == GameMode.singlePlayer
               ? constants.computerName
-              : constants.playerTwoName,
+              : args.player2,
         ),
       ),
       child: const GamePageView(),
