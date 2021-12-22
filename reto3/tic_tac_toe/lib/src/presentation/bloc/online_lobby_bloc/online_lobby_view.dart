@@ -32,8 +32,13 @@ class OnlineLobbyView extends StatelessWidget {
             } else if (state is InRoomWaitingOnlineLobbyState ||
                 state is InRoomReadyOnlineLobbyState) {
               return LobbyRoom(state: state);
+            } else if (state is StartingGameOnlineLobbyState) {
+              context
+                  .read<OnlineLobbyCubit>()
+                  .startingGame(context, state.first);
+              return const Center(child: CircularProgressIndicator());
             } else {
-              return SizedBox();
+              return const SizedBox();
             }
           },
         ));
@@ -81,7 +86,8 @@ class LobbyRoom extends StatelessWidget {
               ),
               readyState.amIHost
                   ? ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () =>
+                          context.read<OnlineLobbyCubit>().startGame(),
                       child: const Text(
                         'Start Game',
                         style: TextStyle(fontSize: constants.fontSize),

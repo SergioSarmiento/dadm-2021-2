@@ -18,7 +18,11 @@ class MyTurnGamePageState extends GamePageState {
 }
 
 class WaitingGamePageState extends GamePageState {
-  WaitingGamePageState(TicTacToeGame game) : super(game);
+  final String playerInTurn;
+  WaitingGamePageState({
+    required TicTacToeGame game,
+    required this.playerInTurn,
+  }) : super(game);
 }
 
 class GameOverGamePageState extends GamePageState {

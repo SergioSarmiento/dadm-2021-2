@@ -1,7 +1,10 @@
+import 'dart:async';
 import 'dart:math';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:soundpool/soundpool.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tic_tac_toe/src/data/room_dao.dart';
 import 'package:tic_tac_toe/src/presentation/bloc/game_page_bloc/game_page_state.dart';
 import 'package:tic_tac_toe/src/presentation/bloc/game_page_bloc/tic_tac_toe_game.dart';
 import '/src/core/constants.dart' as constants;
@@ -13,36 +16,50 @@ enum Difficulty {
 }
 
 class GamePageCubit extends Cubit<GamePageState> {
-  GamePageCubit({
-    required this.gameMode,
-    required TicTacToeGame game,
-    this.difficulty = Difficulty.hard,
-  }) : super(MyTurnGamePageState(
-          game: game,
-          myName: game.player1,
-        ));
+  GamePageCubit(
+      {required this.gameMode,
+      required TicTacToeGame game,
+      required GamePageState initialState,
+      this.difficulty = Difficulty.hard,
+      this.key = 'no-key'})
+      : super(initialState);
 
   GameMode gameMode;
   Difficulty difficulty;
   Soundpool pool = Soundpool.fromOptions();
+  final String key;
+  final roomDao = RoomDao();
+  late final StreamSubscription<DatabaseEvent> _stream;
+  Symbol currSymbol = Symbol.x;
 
   Future<void> cellMarked(int index) async {
-    if (state is MyTurnGamePageState) {
+    if (state is MyTurnGamePageState && state.game.emptyCell(index)) {
       _playSoundButton(constants.buttonSoundPath);
       state.game.markACell(
-          index,
-          (state as MyTurnGamePageState).myName == state.game.player1
-              ? Symbol.x
-              : Symbol.o);
+        index,
+        currSymbol,
+      );
+      currSymbol = currSymbol == Symbol.x ? Symbol.o : Symbol.x;
       if (_checkWin()) {
+        if (gameMode == GameMode.online) {
+          await roomDao.makeMove(index, key);
+        }
         emit(GameOverGamePageState(
             game: state.game, winner: (state as MyTurnGamePageState).myName));
       } else if (state.game.fullBoard()) {
+        if (gameMode == GameMode.online) {
+          await roomDao.makeMove(index, key);
+        }
         emit(GameOverGamePageState(game: state.game, winner: ''));
       } else {
         switch (gameMode) {
           case GameMode.singlePlayer:
-            emit(WaitingGamePageState(state.game));
+            emit(WaitingGamePageState(
+              game: state.game,
+              playerInTurn: currSymbol == Symbol.x
+                  ? state.game.player1
+                  : state.game.player2,
+            ));
             await Future.delayed(const Duration(seconds: 1));
             _playSoundButton(constants.buttonSoundPath);
             _computerMove();
@@ -68,16 +85,68 @@ class GamePageCubit extends Cubit<GamePageState> {
             ));
             break;
           case GameMode.online:
-            // TODO: Handle this case.
+            await roomDao.makeMove(index, key);
+            emit(WaitingGamePageState(
+              game: state.game,
+              playerInTurn: currSymbol == Symbol.x
+                  ? state.game.player1
+                  : state.game.player2,
+            ));
             break;
         }
       }
     }
   }
 
+  void startListening() {
+    try {
+      _stream = roomDao.getInstance().child(key).onChildChanged.listen((event) {
+        if (state is WaitingGamePageState) {
+          final index = event.snapshot.value as int;
+          state.game.markACell(index, currSymbol);
+          currSymbol = currSymbol == Symbol.x ? Symbol.o : Symbol.x;
+          if (_checkWin()) {
+            emit(
+              GameOverGamePageState(
+                  game: state.game,
+                  winner: (state as WaitingGamePageState).playerInTurn),
+            );
+            roomDao.deleteRoom(key);
+          } else if (state.game.fullBoard()) {
+            emit(GameOverGamePageState(game: state.game, winner: ''));
+            roomDao.deleteRoom(key);
+          } else {
+            emit(MyTurnGamePageState(
+              game: state.game,
+              myName: currSymbol == Symbol.x
+                  ? state.game.player1
+                  : state.game.player2,
+            ));
+          }
+          _stream.cancel();
+        }
+      });
+    } catch (e) {
+      _stream.resume();
+    }
+  }
+
+  void stopListening() {
+    _stream.pause();
+  }
+
+  void waitingForMove() async {
+    if (gameMode == GameMode.online && state is WaitingGamePageState) {
+      await Future.delayed(Duration(seconds: 1));
+      startListening();
+      return;
+    }
+  }
+
   void newGame() {
-    if (state is! WaitingGamePageState) {
+    if (state is! WaitingGamePageState && gameMode != GameMode.online) {
       state.game.resetBoard();
+      currSymbol = Symbol.x;
       emit(MyTurnGamePageState(game: state.game, myName: state.game.player1));
     }
   }
@@ -112,7 +181,8 @@ class GamePageCubit extends Cubit<GamePageState> {
       }
     }
     if (move != -1) {
-      state.game.markACell(move, Symbol.o);
+      state.game.markACell(move, currSymbol);
+      currSymbol = currSymbol == Symbol.x ? Symbol.o : Symbol.x;
     }
   }
 

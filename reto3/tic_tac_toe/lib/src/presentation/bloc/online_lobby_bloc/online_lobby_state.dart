@@ -18,8 +18,12 @@ class WaitingOnlineLobbyState implements OnlineLobbyState {}
 
 class InRoomWaitingOnlineLobbyState implements OnlineLobbyState {
   final String host;
+  final String roomKey;
 
-  InRoomWaitingOnlineLobbyState(this.host);
+  InRoomWaitingOnlineLobbyState({
+    required this.host,
+    required this.roomKey,
+  });
 }
 
 class InRoomReadyOnlineLobbyState implements OnlineLobbyState {
@@ -27,8 +31,11 @@ class InRoomReadyOnlineLobbyState implements OnlineLobbyState {
   final String guest;
   final bool amIHost;
 
-  InRoomReadyOnlineLobbyState(
-      {required this.room, required this.guest, required this.amIHost});
+  InRoomReadyOnlineLobbyState({
+    required this.room,
+    required this.guest,
+    required this.amIHost,
+  });
 }
 
 class AvailableRoomsOnlineLobbyState implements OnlineLobbyState {
@@ -41,4 +48,16 @@ class ErrorOnlineLobbyState implements OnlineLobbyState {
   final String errorMessage;
 
   ErrorOnlineLobbyState(this.errorMessage);
+}
+
+class StartingGameOnlineLobbyState implements OnlineLobbyState {
+  final OnlineLobbyRoom room;
+  final String guest;
+  final bool first;
+
+  StartingGameOnlineLobbyState({
+    required this.room,
+    required this.guest,
+    this.first = true,
+  });
 }

@@ -1,6 +1,6 @@
 class OnlineLobbyRoom {
   final String host;
-  final int id;
+  final String id;
 
   OnlineLobbyRoom({required this.host, required this.id});
 }

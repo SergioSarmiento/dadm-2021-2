@@ -84,6 +84,7 @@ class GamePageMessage extends StatelessWidget {
         );
       }
     } else if (state is WaitingGamePageState) {
+      context.read<GamePageCubit>().waitingForMove();
       return Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -92,10 +93,13 @@ class GamePageMessage extends StatelessWidget {
             style: TextStyle(fontSize: constants.fontSize),
           ),
           Text(
-            state.game.player2,
-            style: const TextStyle(
+            (state as WaitingGamePageState).playerInTurn,
+            style: TextStyle(
               fontSize: constants.fontSize,
-              color: constants.playerTwoColor,
+              color: (state as WaitingGamePageState).playerInTurn ==
+                      state.game.player1
+                  ? constants.playerOneColor
+                  : constants.playerTwoColor,
             ),
           ),
           const CircularProgressIndicator(),
