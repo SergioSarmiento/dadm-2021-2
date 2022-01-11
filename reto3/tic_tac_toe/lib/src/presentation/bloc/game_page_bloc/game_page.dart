@@ -14,16 +14,27 @@ class GamePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final args =
         ModalRoute.of(context)!.settings.arguments as GamePageArguments;
+    final game = TicTacToeGame(
+      player1: args.player1,
+      player2: args.gameMode == GameMode.singlePlayer
+          ? constants.computerName
+          : args.player2,
+    );
     return BlocProvider(
       create: (_) => GamePageCubit(
         gameMode: args.gameMode,
         difficulty: args.difficulty,
-        game: TicTacToeGame(
-          player1: constants.playerOneName,
-          player2: args.gameMode == GameMode.singlePlayer
-              ? constants.computerName
-              : constants.playerTwoName,
-        ),
+        game: game,
+        initialState: args.first
+            ? MyTurnGamePageState(
+                game: game,
+                myName: game.player1,
+              )
+            : WaitingGamePageState(
+                game: game,
+                playerInTurn: game.player1,
+              ),
+        key: args.roomKey,
       ),
       child: const GamePageView(),
     );

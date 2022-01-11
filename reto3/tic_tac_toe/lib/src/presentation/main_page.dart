@@ -17,10 +17,12 @@ class MainPage extends StatelessWidget {
       ),
       SizedBox(
         height: MediaQuery.of(context).size.height * x,
+        width: MediaQuery.of(context).size.width * 0.5,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            ElevatedButton(
+            ElevatedButton.icon(
               onPressed: () => showDialog<String>(
                 context: context,
                 builder: (BuildContext context) => AlertDialog(
@@ -71,21 +73,30 @@ class MainPage extends StatelessWidget {
                   ],
                 ),
               ),
-              child: const Text(constants.gameModeSinglePlayer),
+              icon: const Icon(Icons.person),
+              label: const Text(
+                constants.gameModeSinglePlayer,
+                style: TextStyle(fontSize: constants.fontSize),
+              ),
             ),
-            ElevatedButton(
+            ElevatedButton.icon(
               onPressed: () => Navigator.pushNamed(
                 context,
                 '/gamePage',
                 arguments: GamePageArguments(gameMode: GameMode.twoPlayers),
               ),
-              child: const Text(constants.gameModeTwoPlayers),
+              icon: const Icon(Icons.people),
+              label: const Text(
+                constants.gameModeTwoPlayers,
+                style: TextStyle(fontSize: constants.fontSize),
+              ),
             ),
-            ElevatedButton(
-              onPressed: () {},
-              child: const Text(constants.gameModeOnline),
-            ),
-            ElevatedButton(
+            ElevatedButton.icon(
+                onPressed: () => Navigator.pushNamed(context, '/onlineLobby'),
+                icon: const Icon(Icons.wifi),
+                label: const Text(constants.gameModeOnline,
+                    style: TextStyle(fontSize: constants.fontSize))),
+            ElevatedButton.icon(
               onPressed: () => showDialog<String>(
                 context: context,
                 builder: (BuildContext context) => AlertDialog(
@@ -102,7 +113,11 @@ class MainPage extends StatelessWidget {
                   ],
                 ),
               ),
-              child: const Text(constants.quit),
+              icon: const Icon(Icons.exit_to_app),
+              label: const Text(
+                constants.quit,
+                style: TextStyle(fontSize: constants.fontSize),
+              ),
             ),
           ],
         ),

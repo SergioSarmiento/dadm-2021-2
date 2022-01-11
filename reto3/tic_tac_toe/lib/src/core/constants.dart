@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 
 const String title = 'Tic-Tac-Toe Game';
 const String blank = '';
-const String playerOneName = 'Player 1';
-const String playerTwoName = 'Player 2';
-const String computerName = 'computer';
+const String playerOneName = 'Player 1 ';
+const String playerTwoName = 'Player 2 ';
+const String computerName = 'computer ';
 const String draw = 'It\'s a tie';
 const String winText = 'The winner is ';
 const String turnText = 'Turn: ';

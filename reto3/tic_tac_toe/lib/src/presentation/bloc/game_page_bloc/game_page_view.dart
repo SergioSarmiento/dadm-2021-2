@@ -11,7 +11,10 @@ class GamePageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('play')),
+      appBar: AppBar(
+        title: const Text('play'),
+        automaticallyImplyLeading: false,
+      ),
       body: BlocBuilder<GamePageCubit, GamePageState>(
         builder: (context, state) {
           return OrientationBuilder(builder: (context, orientation) {
@@ -33,6 +36,81 @@ class GamePageView extends StatelessWidget {
   }
 }
 
+class GamePageMessage extends StatelessWidget {
+  const GamePageMessage({Key? key, required this.state}) : super(key: key);
+  final GamePageState state;
+
+  @override
+  Widget build(BuildContext context) {
+    if (state is MyTurnGamePageState) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            constants.turnText,
+            style: TextStyle(fontSize: constants.fontSize),
+          ),
+          Text((state as MyTurnGamePageState).myName,
+              style: TextStyle(
+                  fontSize: constants.fontSize,
+                  color: (state as MyTurnGamePageState).myName ==
+                          state.game.player1
+                      ? constants.playerOneColor
+                      : constants.playerTwoColor)),
+        ],
+      );
+    } else if (state is GameOverGamePageState) {
+      if ((state as GameOverGamePageState).winner == '') {
+        return const Text(
+          constants.draw,
+          style: TextStyle(fontSize: constants.fontSize),
+        );
+      } else {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              constants.winText,
+              style: TextStyle(fontSize: constants.fontSize),
+            ),
+            Text((state as GameOverGamePageState).winner,
+                style: TextStyle(
+                    fontSize: constants.fontSize,
+                    color: (state as GameOverGamePageState).winner ==
+                            state.game.player1
+                        ? constants.playerOneColor
+                        : constants.playerTwoColor)),
+          ],
+        );
+      }
+    } else if (state is WaitingGamePageState) {
+      context.read<GamePageCubit>().waitingForMove();
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            constants.turnText,
+            style: TextStyle(fontSize: constants.fontSize),
+          ),
+          Text(
+            (state as WaitingGamePageState).playerInTurn,
+            style: TextStyle(
+              fontSize: constants.fontSize,
+              color: (state as WaitingGamePageState).playerInTurn ==
+                      state.game.player1
+                  ? constants.playerOneColor
+                  : constants.playerTwoColor,
+            ),
+          ),
+          const CircularProgressIndicator(),
+        ],
+      );
+    } else {
+      return const Text('An error occured');
+    }
+  }
+}
+
 class PortraitMode extends StatelessWidget {
   const PortraitMode({Key? key, required this.context, required this.state})
       : super(key: key);
@@ -48,43 +126,7 @@ class PortraitMode extends StatelessWidget {
           context: context,
           state: state,
         ),
-        state is! GameOverGamePageState && state.game.fullBoard()
-            ? const Text(
-                constants.draw,
-                style: TextStyle(fontSize: constants.fontSize),
-              )
-            : Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    state is GameOverGamePageState
-                        ? constants.winText
-                        : constants.turnText,
-                    style: const TextStyle(fontSize: constants.fontSize),
-                  ),
-                  Text(
-                    state is GameOverGamePageState
-                        ? (state as GameOverGamePageState).winner
-                        : state is MyTurnGamePageState
-                            ? (state as MyTurnGamePageState).myName
-                            : '',
-                    style: TextStyle(
-                      fontSize: constants.fontSize,
-                      color: state is GameOverGamePageState
-                          ? (state as GameOverGamePageState).winner ==
-                                  state.game.player1
-                              ? constants.playerOneColor
-                              : constants.playerTwoColor
-                          : state is MyTurnGamePageState
-                              ? (state as MyTurnGamePageState).myName ==
-                                      state.game.player1
-                                  ? constants.playerOneColor
-                                  : constants.playerTwoColor
-                              : constants.playerOneColor,
-                    ),
-                  ),
-                ],
-              ),
+        GamePageMessage(state: state),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
@@ -93,7 +135,11 @@ class PortraitMode extends StatelessWidget {
               child: const Text(constants.playAgain),
             ),
             ElevatedButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () {
+                if (state is! WaitingGamePageState) {
+                  Navigator.pop(context);
+                }
+              },
               child: const Text(constants.quit),
             ),
           ],
@@ -121,43 +167,7 @@ class LandscapeMode extends StatelessWidget {
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            state is! GameOverGamePageState && state.game.fullBoard()
-                ? const Text(
-                    constants.draw,
-                    style: TextStyle(fontSize: constants.fontSize),
-                  )
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        state is GameOverGamePageState
-                            ? constants.winText
-                            : constants.turnText,
-                        style: const TextStyle(fontSize: constants.fontSize),
-                      ),
-                      Text(
-                        state is GameOverGamePageState
-                            ? (state as GameOverGamePageState).winner
-                            : state is MyTurnGamePageState
-                                ? (state as MyTurnGamePageState).myName
-                                : '',
-                        style: TextStyle(
-                          fontSize: constants.fontSize,
-                          color: state is GameOverGamePageState
-                              ? (state as GameOverGamePageState).winner ==
-                                      state.game.player1
-                                  ? constants.playerOneColor
-                                  : constants.playerTwoColor
-                              : state is MyTurnGamePageState
-                                  ? (state as MyTurnGamePageState).myName ==
-                                          state.game.player1
-                                      ? constants.playerOneColor
-                                      : constants.playerTwoColor
-                                  : constants.playerOneColor,
-                        ),
-                      ),
-                    ],
-                  ),
+            GamePageMessage(state: state),
             ElevatedButton(
               onPressed: () => context.read<GamePageCubit>().newGame(),
               child: const Text(constants.playAgain),

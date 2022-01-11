@@ -52,6 +52,10 @@ class TicTacToeGame {
     return !cells.contains(Symbol.blank);
   }
 
+  bool emptyCell(int index) {
+    return cells[index] == Symbol.blank;
+  }
+
   void resetBoard() {
     cells.asMap().forEach((key, value) => cells[key] = Symbol.blank);
   }
