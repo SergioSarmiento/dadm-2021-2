@@ -137,17 +137,16 @@ class MainPageCubit extends Cubit<MainPageState> {
     );
   }
 
-  Future<void> deleteCompany(String name) async {
+  Future<void> deleteCompany(int id) async {
     try {
-      await database.rawDelete('DELETE FROM Companies WHERE name = "${name}"');
+      await database.rawDelete('DELETE FROM Companies WHERE id = "${id}"');
       emit(WaitingMainPageState());
     } catch (e) {
       print(e);
     }
   }
 
-  void ShowDialogToDelete(
-      {required BuildContext context, required String name}) {
+  void ShowDialogToDelete({required BuildContext context, required int id}) {
     showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
@@ -159,7 +158,7 @@ class MainPageCubit extends Cubit<MainPageState> {
           ),
           TextButton(
             onPressed: () {
-              deleteCompany(name);
+              deleteCompany(id);
               Navigator.pop(context);
             },
             child: const Text('Continuar'),

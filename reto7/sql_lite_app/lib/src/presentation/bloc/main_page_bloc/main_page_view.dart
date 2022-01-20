@@ -114,7 +114,7 @@ class MainPageView extends StatelessWidget {
                                             .read<MainPageCubit>()
                                             .ShowDialogToDelete(
                                               context: context,
-                                              name: e.name,
+                                              id: e.id,
                                             ),
                                         icon: Icon(Icons.delete),
                                         label: Text('Borrar')),
