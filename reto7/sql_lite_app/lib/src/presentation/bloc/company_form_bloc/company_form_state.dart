@@ -1,4 +1,5 @@
 class CompanyFormState {
+  final int id;
   final String name;
   final String url;
   final String phone;
@@ -6,6 +7,7 @@ class CompanyFormState {
   final String classification;
 
   CompanyFormState({
+    required this.id,
     required this.name,
     required this.url,
     required this.phone,
@@ -16,12 +18,14 @@ class CompanyFormState {
 
 class CreatingCompanyFormState extends CompanyFormState {
   CreatingCompanyFormState(
-      {required String name,
+      {required int id,
+      required String name,
       required String url,
       required String phone,
       required String products,
       required String classification})
       : super(
+          id: id,
           name: name,
           url: url,
           phone: phone,
@@ -32,12 +36,14 @@ class CreatingCompanyFormState extends CompanyFormState {
 
 class EditingCompanyFormState extends CompanyFormState {
   EditingCompanyFormState(
-      {required String name,
+      {required int id,
+      required String name,
       required String url,
       required String phone,
       required String products,
       required String classification})
       : super(
+          id: id,
           name: name,
           url: url,
           phone: phone,

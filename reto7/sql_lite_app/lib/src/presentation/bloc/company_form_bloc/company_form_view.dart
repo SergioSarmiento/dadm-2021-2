@@ -76,7 +76,7 @@ class CompanyFormView extends StatelessWidget {
                               borderRadius: BorderRadius.circular(15),
                             ),
                           ),
-                          initialValue: state.name,
+                          initialValue: state.url,
                           onChanged: (text) =>
                               context.read<CompanyFormCubit>().editUrl(text),
                         ),
@@ -101,7 +101,7 @@ class CompanyFormView extends StatelessWidget {
                               borderRadius: BorderRadius.circular(15),
                             ),
                           ),
-                          initialValue: state.name,
+                          initialValue: state.phone,
                           onChanged: (text) =>
                               context.read<CompanyFormCubit>().editPhone(text),
                         ),
@@ -126,7 +126,7 @@ class CompanyFormView extends StatelessWidget {
                               borderRadius: BorderRadius.circular(15),
                             ),
                           ),
-                          initialValue: state.name,
+                          initialValue: state.products,
                           onChanged: (text) => context
                               .read<CompanyFormCubit>()
                               .editProducts(text),
@@ -159,7 +159,8 @@ class CompanyFormView extends StatelessWidget {
                 ),
               ),
               ElevatedButton(
-                onPressed: () => {},
+                onPressed: () =>
+                    context.read<CompanyFormCubit>().finish(context),
                 child: Text(
                     state is CreatingCompanyFormState ? 'Crear' : 'Editar'),
               ),

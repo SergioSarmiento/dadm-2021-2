@@ -8,6 +8,7 @@ enum Classification {
 
 class Company extends Equatable {
   Company({
+    required this.id,
     required this.name,
     required this.url,
     required this.contactPhone,
@@ -15,6 +16,7 @@ class Company extends Equatable {
     required this.classification,
   });
 
+  final int id;
   final String name;
   final String url;
   final String contactPhone;
@@ -23,6 +25,7 @@ class Company extends Equatable {
 
   @override
   List<Object?> get props => [
+        id,
         name,
         url,
         contactPhone,

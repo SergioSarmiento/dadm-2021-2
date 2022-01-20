@@ -4,9 +4,10 @@ abstract class MainPageState {}
 
 class DisplayListMainPageState implements MainPageState {
   final List<Company> companies;
-  final int filter;
+
   DisplayListMainPageState({
     required this.companies,
-    required this.filter,
   });
 }
+
+class WaitingMainPageState implements MainPageState {}
